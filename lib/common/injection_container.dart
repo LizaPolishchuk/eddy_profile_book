@@ -1,5 +1,7 @@
-import 'package:eddy_profile_book/data/local_data%20/local_storage.dart';
-import 'package:eddy_profile_book/presentation/blocs/auth/auth_cubit.dart';
+import 'package:eddy_profile_book/data/local_data/local_storage.dart';
+import 'package:eddy_profile_book/data/local_data/profiles_storage.dart';
+import 'package:eddy_profile_book/presentation/cubits/auth/auth_cubit.dart';
+import 'package:eddy_profile_book/presentation/cubits/profiles/profiles_cubit.dart';
 import 'package:get_it/get_it.dart';
 
 
@@ -24,6 +26,7 @@ Future<void> init() async {
 
   ///Bloc
   getIt.registerFactory(() => AuthCubit(getIt()));
+  getIt.registerFactory(() => ProfilesCubit(getIt()));
 
   ///Data sources
   // getIt.registerLazySingleton<SalonsRemoteDataSource>(() => SalonsRemoteDataSourceImpl(getIt(), getIt()));
@@ -36,6 +39,7 @@ Future<void> init() async {
   // getIt.registerLazySingleton(() => sharedPreferences);
 
   getIt.registerLazySingleton(() => LocalStorage());
+  getIt.registerLazySingleton(() => ProfilesStorage());
 
 
 }

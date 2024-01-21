@@ -1,13 +1,15 @@
 import 'package:eddy_profile_book/common/injection_container.dart';
 import 'package:eddy_profile_book/common/utils/string_utils.dart';
-import 'package:eddy_profile_book/presentation/blocs/auth/auth_cubit.dart';
-import 'package:eddy_profile_book/presentation/blocs/auth/auth_state.dart';
+import 'package:eddy_profile_book/presentation/cubits/auth/auth_cubit.dart';
+import 'package:eddy_profile_book/presentation/cubits/auth/auth_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
+
   @override
-  _SignUpPageState createState() => _SignUpPageState();
+  State<SignUpPage> createState() => _SignUpPageState();
 }
 
 class _SignUpPageState extends State<SignUpPage> {
@@ -15,6 +17,15 @@ class _SignUpPageState extends State<SignUpPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    Listenable.merge([_emailController, _passwordController, _confirmPasswordController]).addListener(() {
+      setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +64,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       decoration: const InputDecoration(
                         icon: Icon(Icons.email),
                         labelText: 'Email',
+                        contentPadding: EdgeInsets.zero,
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -65,27 +77,31 @@ class _SignUpPageState extends State<SignUpPage> {
                         return null;
                       },
                     ),
+                    const SizedBox(height: 16),
                     TextFormField(
                       controller: _passwordController,
                       decoration: const InputDecoration(
                         icon: Icon(Icons.lock),
                         labelText: 'Password',
+                        contentPadding: EdgeInsets.zero,
                       ),
                       obscureText: true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a password';
-                        } else if (value.length < 8 || value.length > 16) {
+                        } else if (value.length < 4 || value.length > 16) {
                           return 'Password must be between 4 and 16 characters';
                         }
                         return null;
                       },
                     ),
+                    const SizedBox(height: 16),
                     TextFormField(
                       controller: _confirmPasswordController,
                       decoration: const InputDecoration(
                         icon: Icon(Icons.lock),
                         labelText: 'Confirm Password',
+                        contentPadding: EdgeInsets.zero,
                       ),
                       obscureText: true,
                       validator: (value) {
@@ -95,6 +111,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         return null;
                       },
                     ),
+                    const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: (_emailController.text.isNotEmpty &&
                               _passwordController.text.isNotEmpty &&

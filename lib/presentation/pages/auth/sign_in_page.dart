@@ -1,13 +1,16 @@
 import 'package:eddy_profile_book/common/injection_container.dart';
+import 'package:eddy_profile_book/common/utils/loader_alert.dart';
 import 'package:eddy_profile_book/common/utils/string_utils.dart';
-import 'package:eddy_profile_book/presentation/blocs/auth/auth_state.dart';
-import 'package:eddy_profile_book/presentation/blocs/auth/auth_cubit.dart';
+import 'package:eddy_profile_book/presentation/cubits/auth/auth_cubit.dart';
+import 'package:eddy_profile_book/presentation/cubits/auth/auth_state.dart';
 import 'package:eddy_profile_book/presentation/pages/auth/sign_up_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AuthPage extends StatefulWidget {
+  const AuthPage({super.key});
+
   @override
   State<AuthPage> createState() => _AuthPageState();
 }
@@ -32,20 +35,20 @@ class _AuthPageState extends State<AuthPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Auth'),
+        title: const Text('Welcome'),
       ),
       body: BlocProvider(
         create: (context) => getIt<AuthCubit>(),
         child: BlocConsumer<AuthCubit, AuthState>(
           listener: (context, state) {
-            if (state is AuthFailure) {
+            if (state is AuthLoading) {
+              return Loader.showLoader(context);
+            } else if (state is AuthFailure) {
+              Loader.hideLoader(context);
               _showErrorAlert(state.error);
             }
           },
           builder: (context, state) {
-            if (state is AuthLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
             return Padding(
               padding: const EdgeInsets.all(16.0),
               child: Form(
@@ -57,6 +60,7 @@ class _AuthPageState extends State<AuthPage> {
                       decoration: const InputDecoration(
                         icon: Icon(Icons.email),
                         labelText: 'Email',
+                        contentPadding: EdgeInsets.zero,
                       ),
                       validator: (value) {
                         if (value != null && !StringUtils.emailRegex.hasMatch(value)) {
@@ -66,11 +70,13 @@ class _AuthPageState extends State<AuthPage> {
                         return null;
                       },
                     ),
+                    const SizedBox(height: 16),
                     TextFormField(
                       controller: _passwordController,
                       decoration: const InputDecoration(
                         icon: Icon(Icons.lock),
                         labelText: 'Password',
+                        contentPadding: EdgeInsets.zero,
                       ),
                       obscureText: true,
                     ),

@@ -1,7 +1,8 @@
 import 'package:eddy_profile_book/common/injection_container.dart' as dependency_injection;
 import 'package:eddy_profile_book/common/injection_container.dart';
-import 'package:eddy_profile_book/data/local_data%20/local_storage.dart';
-import 'package:eddy_profile_book/data/local_data%20/shared_prefs_service.dart';
+import 'package:eddy_profile_book/data/local_data/local_storage.dart';
+import 'package:eddy_profile_book/data/local_data/profiles_storage.dart';
+import 'package:eddy_profile_book/domain/entities/profile.dart';
 import 'package:eddy_profile_book/presentation/pages/auth/sign_in_page.dart';
 import 'package:eddy_profile_book/presentation/pages/profiles_page.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +20,10 @@ void main() async {
 Future<void> _initHive() async {
   await Hive.initFlutter();
 
-  // Hive.registerAdapter(SalonAdapter());
   await getIt<LocalStorage>().openBox();
+
+  Hive.registerAdapter(ProfileAdapter());
+  await getIt<ProfilesStorage>().openBox();
 }
 
 class MyApp extends StatelessWidget {
@@ -43,7 +46,7 @@ class InitialPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<BoxEvent>(
-      stream: _localStorage.watch(key: LocalStorage.userLoggedIn),
+      stream: _localStorage.watchBox(key: LocalStorage.userLoggedIn),
       builder: (context, snapshot) {
         bool isLoggedIn = snapshot.data?.value ?? _localStorage.isUserLoggedIn();
 

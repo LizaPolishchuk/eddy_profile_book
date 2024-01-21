@@ -1,6 +1,5 @@
-
 import 'package:hive/hive.dart';
-const int hiveTypeProfiles = 0;
+import 'package:hive_flutter/hive_flutter.dart';
 
 class LocalStorage {
   late Box<dynamic> _box;
@@ -34,11 +33,11 @@ class LocalStorage {
     return _box.put(key, value);
   }
 
-  Future clear() {
+  Future clearBox() {
     return _box.clear();
   }
 
-  watch({dynamic key}) {
+  watchBox({dynamic key}) {
     return _box.watch(key: key);
   }
 }
