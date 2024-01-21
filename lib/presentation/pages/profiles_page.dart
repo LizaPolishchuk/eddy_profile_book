@@ -2,6 +2,7 @@ import 'package:eddy_profile_book/common/injection_container.dart';
 import 'package:eddy_profile_book/presentation/cubits/auth/auth_cubit.dart';
 import 'package:eddy_profile_book/presentation/cubits/profiles/profiles_cubit.dart';
 import 'package:eddy_profile_book/presentation/cubits/profiles/profiles_state.dart';
+import 'package:eddy_profile_book/presentation/pages/add_edit_profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -37,6 +38,7 @@ class ProfilesPage extends StatelessWidget {
             if (state is ProfilesLoading) {
               return const Center(child: CircularProgressIndicator());
             } else if (state is ProfilesLoaded) {
+              print("ProfilesLoaded: ${state.profiles.length}");
               return ListView.builder(
                 itemCount: state.profiles.length,
                 itemBuilder: (context, index) {
@@ -44,7 +46,7 @@ class ProfilesPage extends StatelessWidget {
                   return ListTile(
                     leading: CircleAvatar(
                       backgroundImage: profile.imageUrl == null || profile.imageUrl!.isEmpty
-                          ? const AssetImage('assets/images/profile_placeholder.png') as ImageProvider
+                          ? const AssetImage('assets/images/profile_placeholder.jpeg') as ImageProvider
                           : NetworkImage(profile.imageUrl!),
                     ),
                     title: Text(profile.name),
@@ -62,7 +64,7 @@ class ProfilesPage extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            // Navigate to the add profile page
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const AddEditProfilePage()));
           },
           child: const Icon(Icons.add),
         ),

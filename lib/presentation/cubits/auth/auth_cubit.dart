@@ -1,4 +1,4 @@
-import 'package:eddy_profile_book/data/local_data/local_storage.dart';
+import 'package:eddy_profile_book/data/data_sources/local_data/local_storage.dart';
 import 'package:eddy_profile_book/presentation/cubits/auth/auth_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

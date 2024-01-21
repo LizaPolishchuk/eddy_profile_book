@@ -1,4 +1,4 @@
-import 'package:eddy_profile_book/data/local_data/profiles_storage.dart';
+import 'package:eddy_profile_book/data/data_sources/local_data/profiles_storage.dart';
 import 'package:hive/hive.dart';
 
 part 'profile.g.dart';
