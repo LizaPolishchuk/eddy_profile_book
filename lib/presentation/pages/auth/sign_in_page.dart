@@ -4,7 +4,6 @@ import 'package:eddy_profile_book/common/utils/string_utils.dart';
 import 'package:eddy_profile_book/presentation/cubits/auth/auth_cubit.dart';
 import 'package:eddy_profile_book/presentation/cubits/auth/auth_state.dart';
 import 'package:eddy_profile_book/presentation/pages/auth/sign_up_page.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -41,14 +40,14 @@ class _AuthPageState extends State<AuthPage> {
         create: (context) => getIt<AuthCubit>(),
         child: BlocConsumer<AuthCubit, AuthState>(
           listener: (context, state) {
-            if (state is AuthLoading) {
-              return Loader.showLoader(context);
-            } else if (state is AuthFailure) {
-              Loader.hideLoader(context);
+            if (state is AuthFailure) {
               _showErrorAlert(state.error);
             }
           },
           builder: (context, state) {
+            if (state is AuthLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
             return Padding(
               padding: const EdgeInsets.all(16.0),
               child: Form(

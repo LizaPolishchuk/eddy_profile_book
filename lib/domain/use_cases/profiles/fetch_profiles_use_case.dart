@@ -2,12 +2,12 @@ import 'package:eddy_profile_book/common/utils/result_either.dart';
 import 'package:eddy_profile_book/data/repositories/profiles_repository.dart';
 import 'package:eddy_profile_book/domain/entities/profile.dart';
 
-class UpdateProfileUseCase {
+class FetchProfilesUseCase {
   final ProfilesRepository repository;
 
-  UpdateProfileUseCase(this.repository);
+  FetchProfilesUseCase(this.repository);
 
-  Future<Result<void>> call(int index, Profile profile) async {
-    return await repository.updateProfile(index, profile);
+  Future<Result<Stream<Iterable<Profile>>>> call() async {
+    return repository.fetchProfiles();
   }
 }

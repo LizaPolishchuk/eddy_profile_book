@@ -37,6 +37,7 @@ class _AddEditProfilePageState extends State<AddEditProfilePage> {
     _addEditProfileCubit = getIt<AddEditProfileCubit>();
 
     if (widget.profileToEdit != null) {
+      _pickedFile = widget.profileToEdit!.imagePath != null ? File(widget.profileToEdit!.imagePath!) : null;
       _fullNameController.text = widget.profileToEdit!.name;
       _nicknameController.text = widget.profileToEdit!.nickname;
       _descriptionController.text = widget.profileToEdit!.description ?? '';
@@ -51,79 +52,101 @@ class _AddEditProfilePageState extends State<AddEditProfilePage> {
         appBar: AppBar(
           title: const Text('Edit Profile'),
         ),
-        body: BlocBuilder<AddEditProfileCubit, AddEditProfileState>(builder: (context, state) {
+        body: BlocConsumer<AddEditProfileCubit, AddEditProfileState>(listener: (context, state) {
+          if (state is AddEditProfileSuccess) {
+            Navigator.of(context).pop();
+          }
+        }, builder: (context, state) {
           if (state is AddEditProfileLoading) {
             return const Center(child: CircularProgressIndicator());
           } else {
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: <Widget>[
-                    InkWell(
-                      onTap: () => _onChangePhoto(context),
-                      child: Container(
-                        width: 200,
-                        height: 200,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.grey,
-                          image: DecorationImage(
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: <Widget>[
+                      InkWell(
+                        onTap: () => _onChangePhoto(context),
+                        child: Container(
+                          width: 200,
+                          height: 200,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Theme.of(context).primaryColor.withOpacity(0.3),
                             image: _pickedFile != null
-                                ? FileImage(_pickedFile!)
-                                : const AssetImage('assets/images/profile_placeholder.png') as ImageProvider,
-                            fit: BoxFit.cover,
+                                ? DecorationImage(
+                                    image: FileImage(_pickedFile!),
+                                    fit: BoxFit.cover,
+                                  )
+                                : null,
                           ),
+                          child: _pickedFile == null
+                              ? const Icon(
+                                  Icons.add_a_photo,
+                                  color: Colors.white,
+                                )
+                              : null,
                         ),
-                        child: _pickedFile == null
-                            ? const Icon(
-                                Icons.add_a_photo,
-                                color: Colors.white,
-                              )
+                      ),
+                      const SizedBox(height: 32),
+                      TextFormField(
+                        controller: _fullNameController,
+                        maxLines: 1,
+                        decoration: InputDecoration(
+                          fillColor: Colors.grey[200],
+                          filled: true,
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          icon: const Icon(Icons.person),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                          labelText: 'Full Name',
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _nicknameController,
+                        maxLines: 1,
+                        decoration: InputDecoration(
+                          fillColor: Colors.grey[200],
+                          filled: true,
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          icon: const Icon(Icons.person_outline),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                          labelText: 'Nickname',
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _descriptionController,
+                        maxLines: null,
+                        minLines: 5,
+                        decoration: InputDecoration(
+                          fillColor: Colors.grey[200],
+                          filled: true,
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          icon: const Icon(Icons.description),
+                          labelText: 'Description',
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: _fullNameController.text.isNotEmpty || _nicknameController.text.isNotEmpty
+                            ? () => _onPressedSave(context)
                             : null,
+                        child: const Text('Save'),
                       ),
-                    ),
-                    TextFormField(
-                      controller: _fullNameController,
-                      maxLines: 1,
-                      decoration: const InputDecoration(
-                        icon: Icon(Icons.person),
-                        labelText: 'Full Name',
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                    ),
-                    TextFormField(
-                      controller: _nicknameController,
-                      maxLines: 1,
-                      decoration: const InputDecoration(
-                        icon: Icon(Icons.person_outline),
-                        labelText: 'Nickname',
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _descriptionController,
-                      maxLines: null,
-                      minLines: 5,
-                      decoration: InputDecoration(
-                        fillColor: Colors.grey[300],
-                        filled: true,
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.circular(25.0),
-                        ),
-                        icon: const Icon(Icons.description),
-                        labelText: 'Description',
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () => _onPressedSave(context),
-                      child: const Text('Save'),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             );
@@ -161,16 +184,16 @@ class _AddEditProfilePageState extends State<AddEditProfilePage> {
 
   void _onPressedSave(BuildContext context) {
     if (_formKey.currentState!.validate()) {
-      _addEditProfileCubit.addProfile(
-        Profile(
-          id: const Uuid().v4(),
-          name: _fullNameController.text,
-          nickname: _nicknameController.text,
-          description: _descriptionController.text,
-          imagePath: _pickedFile?.path,
-          dateAdded: DateTime.now().toIso8601String(),
-        ),
+      var profile = widget.profileToEdit ?? Profile.emptyProfile();
+
+      profile = widget.profileToEdit!.copyWith(
+        name: _fullNameController.text,
+        nickname: _nicknameController.text,
+        description: _descriptionController.text,
+        imagePath: _pickedFile?.path,
       );
+
+      _addEditProfileCubit.setProfile(profile);
     }
   }
 

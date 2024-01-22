@@ -2,12 +2,12 @@ import 'package:eddy_profile_book/common/utils/result_either.dart';
 import 'package:eddy_profile_book/data/repositories/profiles_repository.dart';
 import 'package:eddy_profile_book/domain/entities/profile.dart';
 
-class AddProfileUseCase {
+class SetProfileUseCase {
   final ProfilesRepository repository;
 
-  AddProfileUseCase(this.repository);
+  SetProfileUseCase(this.repository);
 
   Future<Result<void>> call(Profile profile) async {
-    return await repository.addProfile(profile);
+    return await repository.setProfile(profile);
   }
 }

@@ -21,7 +21,7 @@ class ProfileAdapter extends TypeAdapter<Profile> {
       imagePath: fields[1] as String?,
       name: fields[2] as String,
       nickname: fields[3] as String,
-      dateAdded: fields[4] as String,
+      dateAddedInMillis: fields[4] as int,
       description: fields[5] as String?,
     );
   }
@@ -39,7 +39,7 @@ class ProfileAdapter extends TypeAdapter<Profile> {
       ..writeByte(3)
       ..write(obj.nickname)
       ..writeByte(4)
-      ..write(obj.dateAdded)
+      ..write(obj.dateAddedInMillis)
       ..writeByte(5)
       ..write(obj.description);
   }

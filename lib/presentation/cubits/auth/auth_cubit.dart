@@ -11,7 +11,7 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthLoading());
     try {
       // Simulate a network request
-      await Future.delayed(Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 2));
 
       var savedEmail = _localStorage.getUserEmail();
       var savedPassword = _localStorage.getUserPassword();

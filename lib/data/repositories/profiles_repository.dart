@@ -4,9 +4,9 @@ import 'package:eddy_profile_book/domain/entities/profile.dart';
 abstract class ProfilesRepository {
   Result<List<Profile>> getProfiles();
 
-  Future<Result<void>> addProfile(Profile profile);
+  Result<Stream<Iterable<Profile>>> fetchProfiles();
 
-  Future<Result<void>> updateProfile(int index, Profile profile);
+  Future<Result<void>> setProfile(Profile profile);
 
-  Future<Result<void>> deleteProfile(int index);
+  Future<Result<void>> deleteProfile(String profileId);
 }

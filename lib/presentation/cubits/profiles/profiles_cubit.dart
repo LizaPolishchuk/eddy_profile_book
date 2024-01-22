@@ -1,8 +1,5 @@
-import 'dart:async';
-
-import 'package:eddy_profile_book/data/data_sources/local_data/profiles_storage.dart';
-import 'package:eddy_profile_book/domain/entities/profile.dart';
 import 'package:eddy_profile_book/domain/use_cases/profiles/delete_profile_use_case.dart';
+import 'package:eddy_profile_book/domain/use_cases/profiles/fetch_profiles_use_case.dart';
 import 'package:eddy_profile_book/domain/use_cases/profiles/get_profiles_use_case.dart';
 import 'package:eddy_profile_book/presentation/cubits/profiles/profiles_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,11 +7,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class ProfilesCubit extends Cubit<ProfilesState> {
   final GetProfilesUseCase _getProfilesUseCase;
   final DeleteProfileUseCase _deleteProfileUseCase;
+  final FetchProfilesUseCase _fetchProfilesUseCase;
 
-  ProfilesCubit(this._getProfilesUseCase, this._deleteProfileUseCase) : super(ProfilesInitial()) {
-    // _profilesStorage.getProfiles().addListener(() {
-    //   emit(ProfilesLoaded(_profilesStorage.getProfiles().value.values.toList()));
-    // });
+  ProfilesCubit(this._getProfilesUseCase, this._deleteProfileUseCase, this._fetchProfilesUseCase)
+      : super(ProfilesInitial());
+
+  fetchProfiles() async {
+    var result = await _fetchProfilesUseCase();
+
+    result.fold(
+      data: (profilesStream) {
+        profilesStream.listen((profiles) {
+          emit(ProfilesLoaded(profiles.toList()));
+        });
+      },
+      error: (failure) => emit(ProfilesError(failure.message)),
+    );
   }
 
   getProfiles() async {
@@ -26,8 +34,8 @@ class ProfilesCubit extends Cubit<ProfilesState> {
     );
   }
 
-  deleteProfile(int index) async {
-    var result = await _deleteProfileUseCase(index);
+  deleteProfile(String profileId) async {
+    var result = await _deleteProfileUseCase(profileId);
 
     result.fold(
       data: (_) => emit(ProfileDeleted()),

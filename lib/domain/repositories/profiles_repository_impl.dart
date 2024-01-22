@@ -19,9 +19,18 @@ class ProfilesRepositoryImpl extends ProfilesRepository {
   }
 
   @override
-  Future<Result<void>> addProfile(Profile profile) async {
+  Result<Stream<Iterable<Profile>>> fetchProfiles() {
     try {
-      await _profilesStorage.addProfile(profile);
+      return Result.data(_profilesStorage.fetchProfiles());
+    } catch (e) {
+      return Result.error(Failure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Result<void>> setProfile(Profile profile) async {
+    try {
+      await _profilesStorage.setProfile(profile);
       return Result.data();
     } catch (e) {
       return Result.error(Failure(e.toString()));
@@ -29,19 +38,9 @@ class ProfilesRepositoryImpl extends ProfilesRepository {
   }
 
   @override
-  Future<Result<void>> updateProfile(int index, Profile profile) async {
+  Future<Result<void>> deleteProfile(String profileId) async {
     try {
-      await _profilesStorage.updateProfile(index, profile);
-      return Result.data();
-    } catch (e) {
-      return Result.error(Failure(e.toString()));
-    }
-  }
-
-  @override
-  Future<Result<void>> deleteProfile(int index) async {
-    try {
-      await _profilesStorage.deleteProfile(index);
+      await _profilesStorage.deleteProfile(profileId);
       return Result.data();
     } catch (e) {
       return Result.error(Failure(e.toString()));

@@ -13,23 +13,19 @@ class ProfilesStorage {
     _box = await Hive.openBox<Profile>(_profilesBox);
   }
 
-  ValueListenable<Box<Profile>> fetchProfiles() {
-    return _box.listenable();
+  Stream<Iterable<Profile>> fetchProfiles() {
+    return Stream.value(_box.listenable()).map((event) => event.value.values);
   }
 
   List<Profile> getProfiles() {
     return _box.values.toList();
   }
 
-  Future<void> addProfile(Profile profile) async {
-    await _box.add(profile);
+  Future<void> setProfile(Profile profile) async {
+    await _box.put(profile.id, profile);
   }
 
-  Future<void> updateProfile(int index, Profile profile) async {
-    await _box.putAt(index, profile);
-  }
-
-  Future<void> deleteProfile(int index) async {
-    await _box.deleteAt(index);
+  Future<void> deleteProfile(String profileId) async {
+    await _box.delete(profileId);
   }
 }
