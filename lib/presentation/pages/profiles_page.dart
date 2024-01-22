@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:eddy_profile_book/common/injection_container.dart';
 import 'package:eddy_profile_book/presentation/cubits/auth/auth_cubit.dart';
 import 'package:eddy_profile_book/presentation/cubits/profiles/profiles_cubit.dart';
@@ -45,9 +46,9 @@ class ProfilesPage extends StatelessWidget {
                   final profile = state.profiles[index];
                   return ListTile(
                     leading: CircleAvatar(
-                      backgroundImage: profile.imageUrl == null || profile.imageUrl!.isEmpty
-                          ? const AssetImage('assets/images/profile_placeholder.jpeg') as ImageProvider
-                          : NetworkImage(profile.imageUrl!),
+                      backgroundImage: profile.imagePath == null || profile.imagePath!.isEmpty
+                          ? FileImage(File(profile.imagePath!)) as ImageProvider
+                          : NetworkImage(profile.imagePath!),
                     ),
                     title: Text(profile.name),
                     subtitle: Text(profile.nickname),

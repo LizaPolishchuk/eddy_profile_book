@@ -9,7 +9,7 @@ class Profile {
   final String id;
 
   @HiveField(1)
-  final String? imageUrl;
+  final String? imagePath;
 
   @HiveField(2)
   final String name;
@@ -25,7 +25,7 @@ class Profile {
 
   Profile({
     required this.id,
-    this.imageUrl,
+    this.imagePath,
     required this.name,
     required this.nickname,
     required this.dateAdded,

@@ -13,8 +13,12 @@ class ProfilesStorage {
     _box = await Hive.openBox<Profile>(_profilesBox);
   }
 
-  ValueListenable<Box<Profile>> getProfiles() {
+  ValueListenable<Box<Profile>> fetchProfiles() {
     return _box.listenable();
+  }
+
+  List<Profile> getProfiles() {
+    return _box.values.toList();
   }
 
   Future<void> addProfile(Profile profile) async {

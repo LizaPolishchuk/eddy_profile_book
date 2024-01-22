@@ -1,39 +1,31 @@
 import 'dart:async';
-
-import 'package:eddy_profile_book/data/data_sources/local_data/profiles_storage.dart';
 import 'package:eddy_profile_book/domain/entities/profile.dart';
+import 'package:eddy_profile_book/domain/use_cases/profiles/add_profile_use_case.dart';
+import 'package:eddy_profile_book/domain/use_cases/profiles/update_profile_use_case.dart';
 import 'package:eddy_profile_book/presentation/cubits/add_edit_profile/add_edit_profile_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddEditProfileCubit extends Cubit<AddEditProfileState> {
-  final ProfilesStorage _profilesStorage;
+  final AddProfileUseCase _addProfileUseCase;
+  final UpdateProfileUseCase _updateProfileUseCase;
 
-  AddEditProfileCubit(this._profilesStorage) : super(AddEditProfileInitial());
+  AddEditProfileCubit(this._addProfileUseCase, this._updateProfileUseCase) : super(AddEditProfileInitial());
 
   Future<void> addProfile(Profile profile) async {
-    try {
-      await _profilesStorage.addProfile(profile);
-      emit(AddEditProfileSuccess());
-    } catch (e) {
-      emit(AddEditProfileError(e.toString()));
-    }
+    var result = await _addProfileUseCase(profile);
+
+    result.fold(
+      data: (_) => emit(AddEditProfileSuccess()),
+      error: (failure) => emit(AddEditProfileError(failure.message)),
+    );
   }
 
   Future<void> editProfile(int index, Profile profile) async {
-    try {
-      await _profilesStorage.updateProfile(index, profile);
-      emit(AddEditProfileSuccess());
-    } catch (e) {
-      emit(AddEditProfileError(e.toString()));
-    }
-  }
+    var result = await _updateProfileUseCase(index, profile);
 
-// Future<void> deleteProfile(int index) async {
-//   try {
-//     await _profilesStorage.deleteProfile(index);
-//     emit(AddEditProfileSuccess());
-//   } catch (e) {
-//     emit(AddEditProfileError(e.toString()));
-//   }
-// }
+    result.fold(
+      data: (_) => emit(AddEditProfileSuccess()),
+      error: (failure) => emit(AddEditProfileError(failure.message)),
+    );
+  }
 }

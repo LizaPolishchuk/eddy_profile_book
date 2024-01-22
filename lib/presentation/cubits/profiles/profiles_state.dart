@@ -14,6 +14,8 @@ class ProfilesLoaded extends ProfilesState {
   ProfilesLoaded(this.profiles);
 }
 
+class ProfileDeleted extends ProfilesState {}
+
 class ProfilesError extends ProfilesState {
   final String error;
 
