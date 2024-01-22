@@ -1,5 +1,4 @@
 import 'package:eddy_profile_book/common/injection_container.dart';
-import 'package:eddy_profile_book/common/utils/loader_alert.dart';
 import 'package:eddy_profile_book/common/utils/string_utils.dart';
 import 'package:eddy_profile_book/presentation/cubits/auth/auth_cubit.dart';
 import 'package:eddy_profile_book/presentation/cubits/auth/auth_state.dart';

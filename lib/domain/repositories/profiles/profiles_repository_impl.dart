@@ -1,6 +1,6 @@
 import 'package:eddy_profile_book/common/utils/result_either.dart';
 import 'package:eddy_profile_book/data/data_sources/local_data/profiles_storage.dart';
-import 'package:eddy_profile_book/data/repositories/profiles_repository.dart';
+import 'package:eddy_profile_book/data/repositories/profiles/profiles_repository.dart';
 import 'package:eddy_profile_book/domain/entities/failure.dart';
 import 'package:eddy_profile_book/domain/entities/profile.dart';
 

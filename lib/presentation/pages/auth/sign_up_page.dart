@@ -38,6 +38,7 @@ class _SignUpPageState extends State<SignUpPage> {
         child: BlocConsumer<AuthCubit, AuthState>(
           listener: (context, state) {
             if(state is SignUpSuccess) {
+              print("SignUpSuccess");
               Navigator.of(context).pop();
             }
             if (state is AuthFailure) {

@@ -1,7 +1,13 @@
-import 'package:eddy_profile_book/data/data_sources/local_data/local_storage.dart';
 import 'package:eddy_profile_book/data/data_sources/local_data/profiles_storage.dart';
-import 'package:eddy_profile_book/data/repositories/profiles_repository.dart';
-import 'package:eddy_profile_book/domain/repositories/profiles_repository_impl.dart';
+import 'package:eddy_profile_book/data/data_sources/local_data/users_storage.dart';
+import 'package:eddy_profile_book/data/repositories/auth/auth_repository.dart';
+import 'package:eddy_profile_book/data/repositories/profiles/profiles_repository.dart';
+import 'package:eddy_profile_book/domain/repositories/auth/auth_repository_impl.dart';
+import 'package:eddy_profile_book/domain/repositories/profiles/profiles_repository_impl.dart';
+import 'package:eddy_profile_book/domain/use_cases/auth/sign_in_use_case.dart';
+import 'package:eddy_profile_book/domain/use_cases/auth/sign_out_use_case.dart';
+import 'package:eddy_profile_book/domain/use_cases/auth/sign_up_use_case.dart';
+import 'package:eddy_profile_book/domain/use_cases/auth/user_logged_in_use_case.dart';
 import 'package:eddy_profile_book/domain/use_cases/profiles/set_profile_use_case.dart';
 import 'package:eddy_profile_book/domain/use_cases/profiles/delete_profile_use_case.dart';
 import 'package:eddy_profile_book/domain/use_cases/profiles/fetch_profiles_use_case.dart';
@@ -15,11 +21,12 @@ final getIt = GetIt.instance;
 
 Future<void> init() async {
   ///Data sources
-  getIt.registerSingleton(LocalStorage());
-  getIt.registerLazySingleton<ProfilesStorage>(() => ProfilesStorage());
+  getIt.registerLazySingleton(() => UserStorage());
+  getIt.registerLazySingleton(() => ProfilesStorage());
 
   ///Repository
   getIt.registerLazySingleton<ProfilesRepository>(() => ProfilesRepositoryImpl(getIt()));
+  getIt.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(getIt()));
 
   ///Use Cases
   getIt.registerLazySingleton(() => GetProfilesUseCase(getIt()));
@@ -27,8 +34,13 @@ Future<void> init() async {
   getIt.registerLazySingleton(() => SetProfileUseCase(getIt()));
   getIt.registerLazySingleton(() => DeleteProfileUseCase(getIt()));
 
+  getIt.registerLazySingleton(() => SignInUseCase(getIt()));
+  getIt.registerLazySingleton(() => SignUpUseCase(getIt()));
+  getIt.registerLazySingleton(() => SignOutUseCase(getIt()));
+  getIt.registerLazySingleton(() => UserLoggedInUseCase(getIt()));
+
   ///Bloc
-  getIt.registerSingleton(AuthCubit(getIt()));
+  getIt.registerSingleton(AuthCubit(getIt(), getIt(), getIt()));
   getIt.registerLazySingleton(() => ProfilesCubit(getIt(), getIt(), getIt()));
   getIt.registerLazySingleton(() => AddEditProfileCubit(getIt()));
 }
