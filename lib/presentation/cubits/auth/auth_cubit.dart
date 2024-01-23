@@ -16,8 +16,8 @@ class AuthCubit extends Cubit<AuthState> {
 
     var result = await _signInUseCase(email, password);
     result.fold(
-      data: (profiles) => emit(SignInSuccess()),
-      error: (failure) => emit(AuthFailure(failure.message)),
+      onSuccess: (profiles) => emit(SignInSuccess()),
+      onError: (failure) => emit(AuthFailure(failure.message)),
     );
   }
 
@@ -26,16 +26,16 @@ class AuthCubit extends Cubit<AuthState> {
 
     var result = await _signUpUseCase(email, password);
     result.fold(
-      data: (profiles) => emit(SignUpSuccess()),
-      error: (failure) => emit(AuthFailure(failure.message)),
+      onSuccess: (profiles) => emit(SignUpSuccess()),
+      onError: (failure) => emit(AuthFailure(failure.message)),
     );
   }
 
   Future<void> signOut() async {
     var result = await _signOutUseCase();
     result.fold(
-      data: (profiles) => emit(SignInSuccess()),
-      error: (failure) => emit(AuthFailure(failure.message)),
+      onSuccess: (profiles) => emit(SignInSuccess()),
+      onError: (failure) => emit(AuthFailure(failure.message)),
     );
   }
 }

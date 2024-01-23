@@ -3,7 +3,6 @@ import 'package:eddy_profile_book/data/data_sources/local_data/users_storage.dar
 import 'package:eddy_profile_book/data/repositories/auth/auth_repository.dart';
 import 'package:eddy_profile_book/domain/entities/failure.dart';
 import 'package:eddy_profile_book/domain/entities/user.dart';
-import 'package:uuid/uuid.dart';
 
 class AuthRepositoryImpl extends AuthRepository {
   final UserStorage _userStorage;
@@ -21,8 +20,8 @@ class AuthRepositoryImpl extends AuthRepository {
         if (savedUser?.password != password) {
           return Result.error(Failure("Invalid password!"));
         } else {
-          _userStorage.setIsUserLoggedIn(true);
-          return Result.data();
+          _userStorage.setLoggedInUserEmail(email);
+          return Result.success();
         }
       }
     } catch (e) {
@@ -36,13 +35,9 @@ class AuthRepositoryImpl extends AuthRepository {
       if (_userStorage.containsUser(email)) {
         return Result.error(Failure("This login is already taken!"));
       } else {
-        await _userStorage.addUser(User(
-          id: const Uuid().v4(),
-          email: email,
-          password: password,
-        ));
-        _userStorage.setIsUserLoggedIn(true);
-        return Result.data();
+        await _userStorage.addUser(User(email: email, password: password));
+        _userStorage.setLoggedInUserEmail(email);
+        return Result.success();
       }
     } catch (e) {
       return Result.error(Failure(e.toString()));
@@ -52,17 +47,27 @@ class AuthRepositoryImpl extends AuthRepository {
   @override
   Future<Result<void>> signOut() async {
     try {
-      _userStorage.setIsUserLoggedIn(false);
-      return Result.data();
+      _userStorage.setLoggedInUserEmail(null);
+      return Result.success();
     } catch (e) {
       return Result.error(Failure(e.toString()));
     }
   }
 
   @override
-  Result<Stream<bool>> isUserLoggedIn() {
+  Result<Stream<bool>> isUserLoggedInStream() {
     try {
-      return Result.data(_userStorage.isUserLoggedIn);
+      return Result.success(_userStorage.isUserLoggedInStream);
+    } catch (e) {
+      return Result.error(Failure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Result<bool>> isUserLoggedIn() async {
+    try {
+      bool isLoggedIn = await _userStorage.isUserLoggedIn();
+      return Result.success(isLoggedIn);
     } catch (e) {
       return Result.error(Failure(e.toString()));
     }

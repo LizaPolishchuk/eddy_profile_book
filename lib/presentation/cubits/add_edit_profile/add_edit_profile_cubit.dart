@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:eddy_profile_book/common/utils/event_bus.dart';
 import 'package:eddy_profile_book/domain/entities/profile.dart';
 import 'package:eddy_profile_book/domain/use_cases/profiles/set_profile_use_case.dart';
 import 'package:eddy_profile_book/presentation/cubits/add_edit_profile/add_edit_profile_state.dart';
@@ -13,8 +14,11 @@ class AddEditProfileCubit extends Cubit<AddEditProfileState> {
     var result = await _setProfileUseCase(profile);
 
     result.fold(
-      data: (_) => emit(AddEditProfileSuccess()),
-      error: (failure) => emit(AddEditProfileError(failure.message)),
+      onSuccess: (_) {
+        eventBus.fire(ProfileAddedEvent());
+        emit(AddEditProfileSuccess());
+      },
+      onError: (failure) => emit(AddEditProfileError(failure.message)),
     );
   }
 }

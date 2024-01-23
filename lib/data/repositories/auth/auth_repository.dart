@@ -8,5 +8,7 @@ abstract class AuthRepository {
 
   Future<Result<void>> signOut();
 
-  Result<Stream<bool>> isUserLoggedIn();
+  Result<Stream<bool>> isUserLoggedInStream();
+
+  Future<Result<bool>> isUserLoggedIn();
 }

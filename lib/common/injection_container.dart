@@ -10,7 +10,6 @@ import 'package:eddy_profile_book/domain/use_cases/auth/sign_up_use_case.dart';
 import 'package:eddy_profile_book/domain/use_cases/auth/user_logged_in_use_case.dart';
 import 'package:eddy_profile_book/domain/use_cases/profiles/set_profile_use_case.dart';
 import 'package:eddy_profile_book/domain/use_cases/profiles/delete_profile_use_case.dart';
-import 'package:eddy_profile_book/domain/use_cases/profiles/fetch_profiles_use_case.dart';
 import 'package:eddy_profile_book/domain/use_cases/profiles/get_profiles_use_case.dart';
 import 'package:eddy_profile_book/presentation/cubits/add_edit_profile/add_edit_profile_cubit.dart';
 import 'package:eddy_profile_book/presentation/cubits/auth/auth_cubit.dart';
@@ -30,7 +29,6 @@ Future<void> init() async {
 
   ///Use Cases
   getIt.registerLazySingleton(() => GetProfilesUseCase(getIt()));
-  getIt.registerLazySingleton(() => FetchProfilesUseCase(getIt()));
   getIt.registerLazySingleton(() => SetProfileUseCase(getIt()));
   getIt.registerLazySingleton(() => DeleteProfileUseCase(getIt()));
 
@@ -38,9 +36,4 @@ Future<void> init() async {
   getIt.registerLazySingleton(() => SignUpUseCase(getIt()));
   getIt.registerLazySingleton(() => SignOutUseCase(getIt()));
   getIt.registerLazySingleton(() => UserLoggedInUseCase(getIt()));
-
-  ///Bloc
-  getIt.registerSingleton(AuthCubit(getIt(), getIt(), getIt()));
-  getIt.registerLazySingleton(() => ProfilesCubit(getIt(), getIt(), getIt()));
-  getIt.registerLazySingleton(() => AddEditProfileCubit(getIt()));
 }

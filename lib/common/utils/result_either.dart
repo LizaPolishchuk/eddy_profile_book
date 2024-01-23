@@ -11,16 +11,15 @@ class Result<T extends Object> {
 
   const Result._(this.data, this.error);
 
-  factory Result.data([T? data]) => Result._(data, null);
+  factory Result.success([T? data]) => Result._(data, null);
 
   factory Result.error(Failure error) => Result._(null, error);
 
-  void fold({required Function(T) data, required Function(Failure) error}) {
-    if (this.data != null) {
-      data(this.data!);
-    }
+  void fold({required Function(T?) onSuccess, required Function(Failure) onError}) {
     if (this.error != null) {
-      error.call(this.error!);
+      onError.call(this.error!);
+    } else {
+      onSuccess(this.data);
     }
   }
 }

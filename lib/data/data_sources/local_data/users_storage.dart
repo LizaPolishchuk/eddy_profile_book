@@ -8,7 +8,7 @@ const String storageKey = 'storageKey';
 
 class UserStorage {
   final _usersBox = '_usersBox';
-  final _userLoggedIn = '_userLoggedIn';
+  final _currentUserEmail = '_userEmail';
 
   late Box<dynamic> _box;
 
@@ -27,12 +27,22 @@ class UserStorage {
     _box = await Hive.openBox<dynamic>(_usersBox, encryptionCipher: HiveAesCipher(encryptionKeyUint8List));
   }
 
-  Stream<bool> get isUserLoggedIn {
-    return _box.watch(key: _userLoggedIn).map((event) => event.value);
+  Stream<bool> get isUserLoggedInStream {
+    return _box.watch(key: _currentUserEmail).map((event) {
+      return event.value != null;
+    });
   }
 
-  Future<void> setIsUserLoggedIn(bool value) async {
-    await _box.put(_userLoggedIn, value);
+   isUserLoggedIn() async {
+    return (await getCurrentUserEmail())?.isNotEmpty;
+  }
+
+  Future<void> setLoggedInUserEmail(String? userEmail) async {
+    await _box.put(_currentUserEmail, userEmail);
+  }
+
+  Future<String?> getCurrentUserEmail() async {
+    return await _box.get(_currentUserEmail);
   }
 
   Future<void> addUser(User user) async {

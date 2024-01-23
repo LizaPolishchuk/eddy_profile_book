@@ -1,5 +1,4 @@
 import 'package:eddy_profile_book/domain/entities/profile.dart';
-import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 const int hiveTypeProfiles = 0;
@@ -13,12 +12,9 @@ class ProfilesStorage {
     _box = await Hive.openBox<Profile>(_profilesBox);
   }
 
-  Stream<Iterable<Profile>> fetchProfiles() {
-    return Stream.value(_box.listenable()).map((event) => event.value.values);
-  }
-
-  List<Profile> getProfiles() {
-    return _box.values.toList();
+  List<Profile> getProfiles(String creatorEmail) {
+    return _box.values.where((profile) => profile.creatorEmail == creatorEmail).toList()
+      ..sort((a, b) => b.dateAdded.compareTo(a.dateAdded));
   }
 
   Future<void> setProfile(Profile profile) async {

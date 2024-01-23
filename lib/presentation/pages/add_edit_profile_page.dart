@@ -34,7 +34,13 @@ class _AddEditProfilePageState extends State<AddEditProfilePage> {
   initState() {
     super.initState();
 
-    _addEditProfileCubit = getIt<AddEditProfileCubit>();
+    _addEditProfileCubit = AddEditProfileCubit(getIt());
+
+    Listenable.merge([_fullNameController, _nicknameController]).addListener(
+      () {
+        setState(() {});
+      },
+    );
 
     if (widget.profileToEdit != null) {
       _pickedFile = widget.profileToEdit!.imagePath != null ? File(widget.profileToEdit!.imagePath!) : null;
@@ -182,15 +188,21 @@ class _AddEditProfilePageState extends State<AddEditProfilePage> {
     );
   }
 
-  void _onPressedSave(BuildContext context) {
+  Future<void> _onPressedSave(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       var profile = widget.profileToEdit ?? Profile.emptyProfile();
 
-      profile = widget.profileToEdit!.copyWith(
+      String? savedPhotoPath;
+      if (_pickedFile != null) {
+        savedPhotoPath = (await _savePhoto(_pickedFile!)).path;
+      }
+
+      profile = profile.copyWith(
         name: _fullNameController.text,
         nickname: _nicknameController.text,
         description: _descriptionController.text,
-        imagePath: _pickedFile?.path,
+        imagePath: savedPhotoPath,
+        dateAddedInMillis: DateTime.now().millisecondsSinceEpoch,
       );
 
       _addEditProfileCubit.setProfile(profile);
@@ -201,9 +213,8 @@ class _AddEditProfilePageState extends State<AddEditProfilePage> {
     final XFile? pickedFile = await _picker.pickImage(source: source);
     if (pickedFile == null) return;
 
-    var savedImage = await _savePhoto(File(pickedFile.path));
     setState(() {
-      _pickedFile = savedImage;
+      _pickedFile = File(pickedFile.path);
     });
   }
 
@@ -217,6 +228,7 @@ class _AddEditProfilePageState extends State<AddEditProfilePage> {
   void dispose() {
     _fullNameController.dispose();
     _nicknameController.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
 }

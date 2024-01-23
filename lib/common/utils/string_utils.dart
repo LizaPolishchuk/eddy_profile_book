@@ -6,6 +6,6 @@ class StringUtils {
   );
 
   static String formatDate(date) {
-    return DateFormat.yMd().format(date);
+    return DateFormat("d.MM.yyyy HH:mm").format(date);
   }
 }

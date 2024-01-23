@@ -5,9 +5,11 @@ import 'package:eddy_profile_book/data/data_sources/local_data/users_storage.dar
 import 'package:eddy_profile_book/domain/entities/profile.dart';
 import 'package:eddy_profile_book/domain/entities/user.dart';
 import 'package:eddy_profile_book/domain/use_cases/auth/user_logged_in_use_case.dart';
+import 'package:eddy_profile_book/presentation/cubits/auth/auth_cubit.dart';
 import 'package:eddy_profile_book/presentation/pages/auth/sign_in_page.dart';
 import 'package:eddy_profile_book/presentation/pages/profiles_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
@@ -16,7 +18,11 @@ void main() async {
   await dependency_injection.init();
   await _initHive();
 
-  runApp(const MyApp());
+  final isUserLoggedIn = await getIt<UserLoggedInUseCase>().isUserLoggedIn;
+
+  runApp(MyApp(
+    isUserLoggedIn: isUserLoggedIn,
+  ));
 }
 
 Future<void> _initHive() async {
@@ -30,29 +36,24 @@ Future<void> _initHive() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isUserLoggedIn;
+
+  const MyApp({super.key, required this.isUserLoggedIn});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: InitialPage(),
-    );
-  }
-}
+    return BlocProvider(
+      create: (context) => AuthCubit(getIt(), getIt(), getIt()),
+      child: MaterialApp(
+        home: StreamBuilder<bool>(
+          stream: getIt<UserLoggedInUseCase>().isUserLoggedInStream,
+          builder: (context, snapshot) {
+            bool isLoggedIn = snapshot.data ?? isUserLoggedIn; //?.value ?? _localStorage.isUserLoggedIn();
 
-class InitialPage extends StatelessWidget {
-  const InitialPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<bool>(
-      stream: getIt<UserLoggedInUseCase>().isUserLoggedInStream,
-      builder: (context, snapshot) {
-        print("isUserLoggedIn: ${snapshot.data}");
-        bool isLoggedIn = snapshot.data ?? false; //?.value ?? _localStorage.isUserLoggedIn();
-
-        return isLoggedIn ? ProfilesPage() : AuthPage();
-      },
+            return isLoggedIn ? const ProfilesPage() : const SignInPage();
+          },
+        ),
+      ),
     );
   }
 }

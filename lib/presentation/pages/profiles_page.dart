@@ -15,10 +15,19 @@ class ProfilesPage extends StatefulWidget {
 }
 
 class _ProfilesPageState extends State<ProfilesPage> {
+  late final ProfilesCubit _profilesCubit;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _profilesCubit = ProfilesCubit(getIt(), getIt());
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt<ProfilesCubit>()..fetchProfiles(),
+      create: (context) => _profilesCubit..getProfiles(),
       child: Scaffold(
         appBar: AppBar(
           title: const Text(
@@ -33,18 +42,22 @@ class _ProfilesPageState extends State<ProfilesPage> {
             ),
             IconButton(
               onPressed: () {
-                getIt<AuthCubit>().signOut();
+                context.read<AuthCubit>().signOut();
               },
               icon: const Icon(Icons.logout, color: Colors.white),
             ),
           ],
         ),
-        body: BlocBuilder<ProfilesCubit, ProfilesState>(
+        body: BlocConsumer<ProfilesCubit, ProfilesState>(
+          listener: (context, state) {
+            if (state is ProfilesError) {
+              _showErrorAlert(state.error);
+            }
+          },
           builder: (context, state) {
             if (state is ProfilesLoading) {
               return const Center(child: CircularProgressIndicator());
             } else if (state is ProfilesLoaded) {
-              print("ProfilesLoaded: ${state.profiles.length}");
               if (state.profiles.isEmpty) {
                 return const Center(child: Text("No profiles added"));
               }
@@ -60,7 +73,7 @@ class _ProfilesPageState extends State<ProfilesPage> {
                     ),
                     key: ValueKey<String>(profile.id),
                     onDismissed: (DismissDirection direction) {
-                      getIt<ProfilesCubit>().deleteProfile(profile.id);
+                      _profilesCubit.deleteProfile(profile.id);
                     },
                     child: ListTile(
                       onLongPress: () {
@@ -126,27 +139,19 @@ class _ProfilesPageState extends State<ProfilesPage> {
     );
   }
 
-// void _onLongPressedItem() {
-//   final AppBar _selectedItemAppBar = AppBar(
-//     title: const Text(
-//       'Selected Profile',
-//       style: TextStyle(color: Colors.white),
-//     ),
-//     backgroundColor: Colors.green,
-//     actions: <Widget>[
-//       const IconButton(
-//         onPressed: null, // Navigate to the settings page
-//         icon: Icon(Icons.edit, color: Colors.white),
-//       ),
-//       IconButton(
-//         onPressed: () {
-//           getIt<ProfilesCubit>().deleteProfile(1);
-//         },
-//         icon: const Icon(Icons.delete, color: Colors.white),
-//       ),
-//     ],
-//   );
-//
-//   setState(() {});
-// }
+  void _showErrorAlert(String error) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Text(error),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('OK')),
+        ],
+      ),
+    );
+  }
 }

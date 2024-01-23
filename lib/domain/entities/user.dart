@@ -8,16 +8,12 @@ part 'user.g.dart';
 @HiveType(typeId: hiveTypeUsers)
 class User {
   @HiveField(0)
-  final String id;
-
-  @HiveField(1)
   final String? email;
 
   @HiveField(2)
   final String password;
 
   User({
-    required this.id,
     required this.email,
     required this.password,
   });

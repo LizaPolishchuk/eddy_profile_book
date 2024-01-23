@@ -5,8 +5,13 @@ class UserLoggedInUseCase {
 
   UserLoggedInUseCase(this.repository);
 
+  Future<bool> get isUserLoggedIn async {
+    var result = await repository.isUserLoggedIn();
+    return result.data ?? false;
+  }
+
   get isUserLoggedInStream {
-    var result = repository.isUserLoggedIn();
+    var result = repository.isUserLoggedInStream();
     if (result.hasError) {
       return;
     } else {

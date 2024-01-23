@@ -1,6 +1,7 @@
 import 'package:eddy_profile_book/common/utils/string_utils.dart';
 import 'package:eddy_profile_book/data/data_sources/local_data/profiles_storage.dart';
 import 'package:hive/hive.dart';
+import 'package:uuid/uuid.dart';
 
 part 'profile.g.dart';
 
@@ -24,6 +25,9 @@ class Profile {
   @HiveField(5)
   final String? description;
 
+  @HiveField(6)
+  String creatorEmail;
+
   get dateAdded => StringUtils.formatDate(DateTime.fromMillisecondsSinceEpoch(dateAddedInMillis));
 
   Profile({
@@ -33,10 +37,11 @@ class Profile {
     required this.nickname,
     required this.dateAddedInMillis,
     this.description,
+    required this.creatorEmail,
   });
 
   factory Profile.emptyProfile() {
-    return Profile(id: "", name: "", nickname: "", dateAddedInMillis: 0);
+    return Profile(id: const Uuid().v4(), name: "", nickname: "", dateAddedInMillis: 0, creatorEmail: "");
   }
 
   Profile copyWith({
@@ -48,6 +53,7 @@ class Profile {
   }) {
     return Profile(
       id: id,
+      creatorEmail: creatorEmail,
       imagePath: imagePath ?? this.imagePath,
       name: name ?? this.name,
       nickname: nickname ?? this.nickname,
