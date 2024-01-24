@@ -2,8 +2,8 @@ import 'package:eddy_profile_book/data/data_sources/local_data/profiles_storage.
 import 'package:eddy_profile_book/data/data_sources/local_data/users_storage.dart';
 import 'package:eddy_profile_book/data/repositories/auth/auth_repository.dart';
 import 'package:eddy_profile_book/data/repositories/profiles/profiles_repository.dart';
-import 'package:eddy_profile_book/domain/repositories/auth/auth_repository_impl.dart';
-import 'package:eddy_profile_book/domain/repositories/profiles/profiles_repository_impl.dart';
+import 'package:eddy_profile_book/domain/repositories/auth_repository_impl.dart';
+import 'package:eddy_profile_book/domain/repositories/profiles_repository_impl.dart';
 import 'package:eddy_profile_book/domain/use_cases/auth/sign_in_use_case.dart';
 import 'package:eddy_profile_book/domain/use_cases/auth/sign_out_use_case.dart';
 import 'package:eddy_profile_book/domain/use_cases/auth/sign_up_use_case.dart';

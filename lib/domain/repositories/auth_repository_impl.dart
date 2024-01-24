@@ -55,15 +55,6 @@ class AuthRepositoryImpl extends AuthRepository {
   }
 
   @override
-  Result<Stream<bool>> isUserLoggedInStream() {
-    try {
-      return Result.success(_userStorage.isUserLoggedInStream);
-    } catch (e) {
-      return Result.error(Failure(e.toString()));
-    }
-  }
-
-  @override
   Future<Result<bool>> isUserLoggedIn() async {
     try {
       bool isLoggedIn = await _userStorage.isUserLoggedIn();

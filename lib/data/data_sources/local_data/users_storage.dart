@@ -27,14 +27,8 @@ class UserStorage {
     _box = await Hive.openBox<dynamic>(_usersBox, encryptionCipher: HiveAesCipher(encryptionKeyUint8List));
   }
 
-  Stream<bool> get isUserLoggedInStream {
-    return _box.watch(key: _currentUserEmail).map((event) {
-      return event.value != null;
-    });
-  }
-
-   isUserLoggedIn() async {
-    return (await getCurrentUserEmail())?.isNotEmpty;
+  Future<bool> isUserLoggedIn() async {
+    return (await getCurrentUserEmail())?.isNotEmpty ?? false;
   }
 
   Future<void> setLoggedInUserEmail(String? userEmail) async {

@@ -8,7 +8,7 @@ import 'package:eddy_profile_book/domain/entities/user.dart';
 import 'package:eddy_profile_book/domain/use_cases/auth/user_logged_in_use_case.dart';
 import 'package:eddy_profile_book/presentation/cubits/auth/auth_cubit.dart';
 import 'package:eddy_profile_book/presentation/pages/auth/sign_in_page.dart';
-import 'package:eddy_profile_book/presentation/pages/profiles_page.dart';
+import 'package:eddy_profile_book/presentation/pages/main_list/profiles_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -19,7 +19,7 @@ void main() async {
   await dependency_injection.init();
   await _initHive();
 
-  final isUserLoggedIn = await getIt<UserLoggedInUseCase>().isUserLoggedIn;
+  final isUserLoggedIn = (await getIt<UserLoggedInUseCase>().call()).data ?? false;
 
   runApp(MyApp(
     isUserLoggedIn: isUserLoggedIn,
