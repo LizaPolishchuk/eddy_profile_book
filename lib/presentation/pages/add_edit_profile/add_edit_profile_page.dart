@@ -39,12 +39,6 @@ class _AddEditProfilePageState extends State<AddEditProfilePage> {
 
     _addEditProfileCubit = AddEditProfileCubit(getIt());
 
-    Listenable.merge([_fullNameController, _nicknameController]).addListener(
-      () {
-        setState(() {});
-      },
-    );
-
     if (widget.profileToEdit != null) {
       _pickedFile = widget.profileToEdit!.imagePath != null ? File(widget.profileToEdit!.imagePath!) : null;
       _fullNameController.text = widget.profileToEdit!.name;
@@ -79,6 +73,7 @@ class _AddEditProfilePageState extends State<AddEditProfilePage> {
                   child: Column(
                     children: <Widget>[
                       InkWell(
+                        borderRadius: BorderRadius.circular(50),
                         onTap: () => _onChangePhoto(context),
                         child: Container(
                           width: 200,
@@ -104,6 +99,7 @@ class _AddEditProfilePageState extends State<AddEditProfilePage> {
                       const SizedBox(height: 32),
                       TextFormField(
                         controller: _fullNameController,
+                        onChanged: (_) => setState(() {}),
                         maxLines: 1,
                         decoration: InputDecoration(
                           fillColor: Colors.grey[200],
@@ -121,6 +117,7 @@ class _AddEditProfilePageState extends State<AddEditProfilePage> {
                       TextFormField(
                         controller: _nicknameController,
                         maxLines: 1,
+                        onChanged: (_) => setState(() {}),
                         decoration: InputDecoration(
                           fillColor: Colors.grey[200],
                           filled: true,

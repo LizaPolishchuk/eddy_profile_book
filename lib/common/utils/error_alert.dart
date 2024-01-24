@@ -5,6 +5,7 @@ class ErrorAlert {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        title: const Text('Oops'),
         content: Text(error),
         actions: [
           TextButton(
