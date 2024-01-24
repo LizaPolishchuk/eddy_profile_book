@@ -1,6 +1,8 @@
 import 'dart:io';
 
-import 'package:eddy_profile_book/common/injection_container.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:eddy_profile_book/common/di/injection_container.dart';
+import 'package:eddy_profile_book/common/utils/error_alert.dart';
 import 'package:eddy_profile_book/domain/entities/profile.dart';
 import 'package:eddy_profile_book/presentation/cubits/add_edit_profile/add_edit_profile_cubit.dart';
 import 'package:eddy_profile_book/presentation/cubits/add_edit_profile/add_edit_profile_state.dart';
@@ -10,6 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
+@RoutePage()
 class AddEditProfilePage extends StatefulWidget {
   final Profile? profileToEdit;
 
@@ -59,8 +62,10 @@ class _AddEditProfilePageState extends State<AddEditProfilePage> {
           title: const Text('Edit Profile'),
         ),
         body: BlocConsumer<AddEditProfileCubit, AddEditProfileState>(listener: (context, state) {
-          if (state is AddEditProfileSuccess) {
-            Navigator.of(context).pop();
+          if (state is AddEditProfileError) {
+            ErrorAlert.showError(context, error: state.error);
+          } else if (state is AddEditProfileSuccess) {
+            context.router.pop();
           }
         }, builder: (context, state) {
           if (state is AddEditProfileLoading) {

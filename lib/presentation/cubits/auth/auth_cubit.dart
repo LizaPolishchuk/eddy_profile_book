@@ -34,7 +34,7 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> signOut() async {
     var result = await _signOutUseCase();
     result.fold(
-      onSuccess: (profiles) => emit(SignInSuccess()),
+      onSuccess: (profiles) => emit(SignOutSuccess()),
       onError: (failure) => emit(AuthFailure(failure.message)),
     );
   }

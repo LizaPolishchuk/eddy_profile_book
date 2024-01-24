@@ -1,4 +1,4 @@
-import 'package:eddy_profile_book/common/injection_container.dart';
+import 'package:eddy_profile_book/common/di/injection_container.dart';
 import 'package:eddy_profile_book/common/utils/result_either.dart';
 import 'package:eddy_profile_book/data/data_sources/local_data/profiles_storage.dart';
 import 'package:eddy_profile_book/data/data_sources/local_data/users_storage.dart';

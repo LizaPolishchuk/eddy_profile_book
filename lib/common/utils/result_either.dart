@@ -1,5 +1,6 @@
 //own alternative to Either from dartz package
 import 'package:eddy_profile_book/domain/entities/failure.dart';
+import 'package:flutter/widgets.dart';
 
 class Result<T extends Object> {
   final T? data;
@@ -17,6 +18,7 @@ class Result<T extends Object> {
 
   void fold({required Function(T?) onSuccess, required Function(Failure) onError}) {
     if (this.error != null) {
+      debugPrint("Error: ${this.error}");
       onError.call(this.error!);
     } else {
       onSuccess(this.data);

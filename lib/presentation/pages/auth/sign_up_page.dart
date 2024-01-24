@@ -1,11 +1,15 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:eddy_profile_book/common/utils/string_utils.dart';
 import 'package:eddy_profile_book/presentation/cubits/auth/auth_cubit.dart';
 import 'package:eddy_profile_book/presentation/cubits/auth/auth_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+@RoutePage()
 class SignUpPage extends StatefulWidget {
-  const SignUpPage({super.key});
+  final String? email;
+
+  const SignUpPage({super.key, required this.email});
 
   @override
   State<SignUpPage> createState() => _SignUpPageState();
@@ -21,9 +25,9 @@ class _SignUpPageState extends State<SignUpPage> {
   void initState() {
     super.initState();
 
-    Listenable.merge([_emailController, _passwordController, _confirmPasswordController]).addListener(() {
-      setState(() {});
-    });
+    if (widget.email?.isNotEmpty == true) {
+      _emailController.text = widget.email!;
+    }
   }
 
   @override
@@ -32,23 +36,7 @@ class _SignUpPageState extends State<SignUpPage> {
       appBar: AppBar(
         title: const Text('Sign Up'),
       ),
-      body: BlocConsumer<AuthCubit, AuthState>(
-        listener: (context, state) {
-          if (state is SignUpSuccess) {
-            Navigator.of(context).pop();
-          }
-          if (state is AuthFailure) {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                content: Text(state.error),
-                actions: [
-                  TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK')),
-                ],
-              ),
-            );
-          }
-        },
+      body: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
           if (state is AuthLoading) {
             return const Center(child: CircularProgressIndicator());
@@ -61,6 +49,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 children: <Widget>[
                   TextFormField(
                     controller: _emailController,
+                    onChanged: (_) => setState(() {}),
                     decoration: const InputDecoration(
                       icon: Icon(Icons.email),
                       labelText: 'Email',
@@ -80,6 +69,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _passwordController,
+                    onChanged: (_) => setState(() {}),
                     decoration: const InputDecoration(
                       icon: Icon(Icons.lock),
                       labelText: 'Password',
@@ -98,6 +88,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _confirmPasswordController,
+                    onChanged: (_) => setState(() {}),
                     decoration: const InputDecoration(
                       icon: Icon(Icons.lock),
                       labelText: 'Confirm Password',

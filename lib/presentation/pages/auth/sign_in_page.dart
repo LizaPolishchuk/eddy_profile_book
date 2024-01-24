@@ -1,13 +1,17 @@
-import 'package:eddy_profile_book/common/injection_container.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:eddy_profile_book/common/navigation/app_router.dart';
+import 'package:eddy_profile_book/common/utils/error_alert.dart';
 import 'package:eddy_profile_book/common/utils/string_utils.dart';
 import 'package:eddy_profile_book/presentation/cubits/auth/auth_cubit.dart';
 import 'package:eddy_profile_book/presentation/cubits/auth/auth_state.dart';
-import 'package:eddy_profile_book/presentation/pages/auth/sign_up_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+@RoutePage()
 class SignInPage extends StatefulWidget {
-  const SignInPage({super.key});
+  final VoidCallback onSignedIn;
+
+  const SignInPage({super.key, required this.onSignedIn});
 
   @override
   State<SignInPage> createState() => _SignInPageState();
@@ -19,17 +23,6 @@ class _SignInPageState extends State<SignInPage> {
   final _passwordController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-
-    Listenable.merge([_emailController, _passwordController]).addListener(
-      () {
-        setState(() {});
-      },
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -37,8 +30,10 @@ class _SignInPageState extends State<SignInPage> {
       ),
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
-          if (state is AuthFailure) {
-            _showErrorAlert(state.error);
+          if (state is SignInSuccess || state is SignUpSuccess) {
+            widget.onSignedIn();
+          } else if (state is AuthFailure) {
+            ErrorAlert.showError(context, error: state.error, onPressedCancel: () => _passwordController.clear());
           }
         },
         builder: (context, state) {
@@ -53,6 +48,7 @@ class _SignInPageState extends State<SignInPage> {
                 children: <Widget>[
                   TextFormField(
                     controller: _emailController,
+                    onChanged: (_) => setState(() {}),
                     decoration: const InputDecoration(
                       icon: Icon(Icons.email),
                       labelText: 'Email',
@@ -69,6 +65,7 @@ class _SignInPageState extends State<SignInPage> {
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _passwordController,
+                    onChanged: (_) => setState(() {}),
                     decoration: const InputDecoration(
                       icon: Icon(Icons.lock),
                       labelText: 'Password',
@@ -100,11 +97,7 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   void _onPressedSignUp(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => SignUpPage(),
-      ),
-    );
+    context.router.push(SignUpRoute(email: _emailController.text));
   }
 
   void _onPressedSignIn(BuildContext context) {
@@ -114,23 +107,6 @@ class _SignInPageState extends State<SignInPage> {
             _passwordController.text,
           );
     }
-  }
-
-  void _showErrorAlert(String error) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: Text(error),
-        actions: [
-          TextButton(
-              onPressed: () {
-                _passwordController.clear();
-                Navigator.pop(context);
-              },
-              child: const Text('OK')),
-        ],
-      ),
-    );
   }
 
   @override
